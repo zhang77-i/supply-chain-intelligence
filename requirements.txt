@@ -1,0 +1,10 @@
+python>=3.10
+pandas
+numpy
+scikit-learn
+lightgbm
+scipy
+ortools
+duckdb
+matplotlib
+jupyter
