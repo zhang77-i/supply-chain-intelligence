@@ -1,0 +1,20 @@
+# Data
+/data/raw/
+/data/interim/
+/data/processed/
+*.csv
+*.parquet
+*.duckdb
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
