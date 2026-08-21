@@ -1,0 +1,13 @@
+{
+  "solver": "OR-Tools CP-SAT",
+  "status": "OPTIMAL",
+  "runtime_seconds": 0.1789734000340104,
+  "items": 963,
+  "store_rows": 4815,
+  "cold_start_rows": 7,
+  "quantity_resolution": 0.1,
+  "max_absolute_reconciliation_gap": 4.547473508864641e-13,
+  "max_absolute_quantization_error": 0.04985461592958451,
+  "mean_absolute_adjustment": 4.376949430089099,
+  "objective_value_scaled": 275158032.0
+}

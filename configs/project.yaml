@@ -1,0 +1,48 @@
+project:
+  name: cainiao_inventory_optimization
+  random_seed: 42
+
+data:
+  archive: data/raw/archive/CAINIAO Part II Data_20160509.zip
+  extracted_dir: data/raw/extracted/cainiao_part_ii
+  item_feature: data/raw/extracted/cainiao_part_ii/item_feature2.csv
+  item_store_feature: data/raw/extracted/cainiao_part_ii/item_store_feature2.csv
+  config: data/raw/extracted/cainiao_part_ii/config2.csv
+  sample_submission: data/reference/sample_submission.csv
+  database: data/interim/cainiao.duckdb
+  feature_dataset: data/processed/backtest_samples.parquet
+  inference_dataset: data/processed/inference_snapshot.parquet
+  fold_assignments: data/processed/backtests/fold_assignments.parquet
+  fold_manifest: data/processed/backtests/fold_manifest.csv
+  intermittent_baselines: data/processed/intermittent_baselines.parquet
+  model_predictions: data/processed/model_predictions.parquet
+  inventory_recommendations: data/processed/inventory_recommendations.parquet
+  coordinated_allocation: data/processed/coordinated_multiwarehouse_allocation.parquet
+  stochastic_allocation: data/processed/stochastic_multiwarehouse_backtest.parquet
+
+backtest:
+  history_days: 84
+  horizon_days: 14
+  cutoff_step_days: 14
+  validation_folds: 6
+  minimum_training_cutoffs: 6
+
+modeling:
+  quantiles: [0.20, 0.35, 0.50, 0.65, 0.80]
+  n_estimators: 350
+  learning_rate: 0.04
+  num_leaves: 31
+  min_child_samples: 30
+  early_stopping_rounds: 40
+  n_jobs: 4
+  croston_alpha: 0.10
+  tsb_demand_alpha: 0.10
+  tsb_probability_alpha: 0.10
+
+allocation:
+  quantity_scale: 10
+  cost_scale: 100
+  time_limit_seconds: 30
+  workers: 4
+  scenario_count: 7
+  stochastic_time_limit_seconds: 45

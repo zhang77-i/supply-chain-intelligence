@@ -1,20 +1,18 @@
-# Data
+# Raw and generated data
 /data/raw/
 /data/interim/
 /data/processed/
-*.csv
+/models/
 *.parquet
 *.duckdb
+*.joblib
 
-# Python
+# Python and editors
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
 .venv/
 venv/
-
-# IDE
 .vscode/
 .idea/
-
-# OS
 .DS_Store
