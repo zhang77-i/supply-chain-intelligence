@@ -103,6 +103,9 @@ def main() -> None:
     baseline_last14 = validation.x[:, -horizon_days:].sum(axis=1)
     lstm_metrics = regression_metrics(validation.y, prediction)
     baseline_metrics = regression_metrics(validation.y, baseline_last14)
+    relative_wape_improvement = 100 * (
+        baseline_metrics["wape"] - lstm_metrics["wape"]
+    ) / max(baseline_metrics["wape"], 1e-12)
     metadata.update(
         {
             "validation_cutoff": str(validation_cutoff.date()),
@@ -110,6 +113,7 @@ def main() -> None:
             "max_series": max_series,
             "lstm_metrics": lstm_metrics,
             "last14_metrics": baseline_metrics,
+            "relative_wape_improvement_percent": relative_wape_improvement,
         }
     )
 
@@ -146,6 +150,7 @@ def main() -> None:
 - 验证样本：{len(validation):,}
 - LSTM：{_format_metrics(lstm_metrics)}
 - Last-14：{_format_metrics(baseline_metrics)}
+- 相对 Last-14 WAPE 改善：{relative_wape_improvement:.2f}%（负值表示退化）
 
 这是单折、小范围、单变量的深度学习诊断，用于验证序列管线和时间切分。它不与
 README 中全量六折 LightGBM 结果直接比较，也不会在未经成本敏感分位校准前替换

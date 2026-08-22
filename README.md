@@ -25,6 +25,7 @@ LightGBM 的主模型。
 | 成本敏感 LightGBM 相对最佳传统基线 MA28 | 决策成本降低 25.32% |
 | 确定性全国—五仓协调 | 4,815 组合，CP-SAT OPTIMAL |
 | 7 场景随机协调相对同约束确定性协调 | 平均再降低 0.90% |
+| LSTM 单折 Top-200 全国序列 / 同折 Last-14 | WAPE 0.5368 / 0.5843（降低 8.13%） |
 
 这些数字来自公开数据的滚动离线回测，不代表线上业务收益。独立 Newsvendor 因约束更少而成本更低，不能与全国—五仓协调方案作不公平结论。
 
@@ -75,6 +76,6 @@ configs/project.yaml      数据路径与实验参数
 
 MILP 使用整数库存分配变量、连续补少/补多偏差变量、商品总量平衡约束和可选仓容约束。天池数据没有仓容字段，因此已有全量结果不启用也不虚构容量；模型定义见 [MILP 数学模型](docs/milp_model.md)。
 
-LSTM 的序列构造、滚动切分和适用边界见 [LSTM 基线说明](docs/lstm_baseline.md)。当前 MILP 仍消费经过 Newsvendor 成本校准的库存目标；LSTM 在完成全量多折与分位校准前不直接替换这一输入。
+LSTM 的序列构造、滚动切分和适用边界见 [LSTM 基线说明](docs/lstm_baseline.md) 与 [真实数据诊断报告](reports/lstm_baseline_report.md)。0.5368 是单折、Top-200 全国序列的诊断结果，不与全量六折 LightGBM 作直接优劣结论。当前 MILP 仍消费经过 Newsvendor 成本校准的库存目标；LSTM 在完成全量多折与分位校准前不直接替换这一输入。
 
 详见 [模型报告](reports/modeling_report.md)、[确定性协调报告](reports/multiwarehouse_allocation_report.md) 与 [随机协调报告](reports/stochastic_allocation_report.md)。

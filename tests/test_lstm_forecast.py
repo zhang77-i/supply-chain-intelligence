@@ -76,3 +76,4 @@ def test_lstm_training_smoke() -> None:
     assert (prediction >= 0).all()
     assert metadata["training_rows"] == len(train)
     assert len(metadata["training_loss"]) == 2
+    assert metadata["window_scaling"] == "divide by max(history mean, 1.0)"

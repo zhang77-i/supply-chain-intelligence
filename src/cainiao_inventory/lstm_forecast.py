@@ -165,7 +165,7 @@ def train_lstm_baseline(
     hidden_size: int = 32,
     num_layers: int = 1,
     dropout: float = 0.0,
-    epochs: int = 20,
+    epochs: int = 80,
     batch_size: int = 64,
     learning_rate: float = 1e-3,
     random_seed: int = 42,
@@ -194,23 +194,35 @@ def train_lstm_baseline(
                 dropout=dropout if num_layers > 1 else 0.0,
                 batch_first=True,
             )
-            self.output = nn.Sequential(nn.Linear(hidden_size, 1), nn.Softplus())
+            head_size = max(hidden_size // 2, 4)
+            self.output = nn.Sequential(
+                nn.Linear(hidden_size, head_size),
+                nn.ReLU(),
+                nn.Linear(head_size, 1),
+                nn.Softplus(),
+            )
 
         def forward(self, values: Any) -> Any:
             encoded, _ = self.recurrent(values)
             return self.output(encoded[:, -1, :]).squeeze(-1)
 
-    log_train_x = np.log1p(train.x).astype(np.float32)
+    train_scale = np.maximum(train.x.mean(axis=1), 1.0).astype(np.float32)
+    validation_scale = np.maximum(
+        validation.x.mean(axis=1), 1.0
+    ).astype(np.float32)
+    log_train_x = np.log1p(train.x / train_scale[:, None]).astype(np.float32)
     input_mean = float(log_train_x.mean())
     input_std = max(float(log_train_x.std()), 1e-6)
 
-    def transform_x(values: np.ndarray) -> Any:
-        logged = np.log1p(values).astype(np.float32)
+    def transform_x(values: np.ndarray, scale: np.ndarray) -> Any:
+        logged = np.log1p(values / scale[:, None]).astype(np.float32)
         normalized = (logged - input_mean) / input_std
         return torch.from_numpy(normalized[:, :, None])
 
-    train_x = transform_x(train.x)
-    train_y = torch.from_numpy(np.log1p(train.y).astype(np.float32))
+    train_x = transform_x(train.x, train_scale)
+    train_y = torch.from_numpy(
+        np.log1p(train.y / train_scale).astype(np.float32)
+    )
     generator = torch.Generator().manual_seed(random_seed)
     loader = DataLoader(
         TensorDataset(train_x, train_y),
@@ -238,8 +250,14 @@ def train_lstm_baseline(
 
     model.eval()
     with torch.no_grad():
-        predicted_log = model(transform_x(validation.x)).cpu().numpy()
-    prediction = np.clip(np.expm1(predicted_log), 0.0, None)
+        predicted_log = model(
+            transform_x(validation.x, validation_scale)
+        ).cpu().numpy()
+    prediction = np.clip(
+        np.expm1(predicted_log) * validation_scale,
+        0.0,
+        None,
+    )
     metadata: dict[str, Any] = {
         "architecture": "global univariate LSTM",
         "lookback_days": int(train.x.shape[1]),
@@ -254,6 +272,8 @@ def train_lstm_baseline(
         "validation_rows": len(validation),
         "input_log_mean": input_mean,
         "input_log_std": input_std,
+        "window_scaling": "divide by max(history mean, 1.0)",
+        "target_scaling": "log1p(horizon total / window scale)",
         "training_loss": losses,
     }
     return model, prediction.astype(np.float32), metadata
