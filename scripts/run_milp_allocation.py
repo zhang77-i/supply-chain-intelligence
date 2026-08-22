@@ -7,12 +7,12 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from cainiao_inventory.pipeline import run_pipeline
+from cainiao_inventory.milp_allocation import run_milp_allocation
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Build the Cainiao DuckDB data layer and rolling backtest datasets."
+        description="Solve coordinated multi-warehouse inventory with MILP."
     )
     parser.add_argument(
         "--config",
@@ -23,5 +23,4 @@ def parse_args() -> argparse.Namespace:
 
 
 if __name__ == "__main__":
-    arguments = parse_args()
-    run_pipeline(arguments.config)
+    run_milp_allocation(parse_args().config)

@@ -1,0 +1,16 @@
+{
+  "evaluated_folds": [
+    "fold_02",
+    "fold_03",
+    "fold_04",
+    "fold_05",
+    "fold_06"
+  ],
+  "scenario_count": 7,
+  "average_total_cost": {
+    "deterministic_coordinated": 1015691.9856,
+    "independent_newsvendor": 895654.5173927726,
+    "stochastic_coordinated": 1006600.676
+  },
+  "stochastic_vs_deterministic_cost_reduction": 0.008950852944487386
+}

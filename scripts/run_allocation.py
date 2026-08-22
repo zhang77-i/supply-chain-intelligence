@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+# Preload CP-SAT before the project imports pandas on Windows.
+from ortools.sat.python import cp_model as _cp_model  # noqa: F401
+
 import argparse
 import sys
 from pathlib import Path
@@ -7,12 +10,12 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from cainiao_inventory.pipeline import run_pipeline
+from cainiao_inventory.allocation import run_allocation
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Build the Cainiao DuckDB data layer and rolling backtest datasets."
+        description="Coordinate national target inventory across five stores."
     )
     parser.add_argument(
         "--config",
@@ -23,5 +26,4 @@ def parse_args() -> argparse.Namespace:
 
 
 if __name__ == "__main__":
-    arguments = parse_args()
-    run_pipeline(arguments.config)
+    run_allocation(parse_args().config)
