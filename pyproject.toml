@@ -8,6 +8,9 @@ version = "0.1.0"
 description = "Cost-sensitive demand forecasting and multi-warehouse inventory planning"
 requires-python = ">=3.11"
 
+[project.optional-dependencies]
+deep-learning = ["torch>=2.4,<3"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]

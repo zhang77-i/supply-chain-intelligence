@@ -14,6 +14,7 @@ class PipelineConfig:
     outputs: dict[str, Path]
     backtest: dict[str, int]
     modeling: dict[str, Any]
+    deep_learning: dict[str, Any]
     allocation: dict[str, Any]
     random_seed: int
 
@@ -47,6 +48,9 @@ def load_config(config_path: str | Path) -> PipelineConfig:
         "model_predictions": _resolve(root, data["model_predictions"]),
         "inventory_recommendations": _resolve(root, data["inventory_recommendations"]),
         "coordinated_allocation": _resolve(root, data["coordinated_allocation"]),
+        "coordinated_allocation_milp": _resolve(
+            root, data["coordinated_allocation_milp"]
+        ),
         "stochastic_allocation": _resolve(root, data["stochastic_allocation"]),
         "audit_report": root / "reports" / "initial_data_audit.md",
         "audit_tables": root / "reports" / "tables",
@@ -58,6 +62,7 @@ def load_config(config_path: str | Path) -> PipelineConfig:
         outputs=outputs,
         backtest={key: int(value) for key, value in payload["backtest"].items()},
         modeling=payload.get("modeling", {}),
+        deep_learning=payload.get("deep_learning", {}),
         allocation=payload.get("allocation", {}),
         random_seed=int(payload["project"]["random_seed"]),
     )
